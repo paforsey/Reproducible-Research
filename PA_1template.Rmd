@@ -153,7 +153,7 @@ For this part the weekdays() function may be of some help here. Use the dataset 
     g <- g + facet_wrap(~day, ncol=1)
     g <- g + ggtitle("Avg Steps by 5-Minute Interval Accross All Days") 
     g <- g + labs(x="Interval", y="Steps")
-    g <- g  + theme_bw()
+    g <- g + theme_bw()
     g
 ```
 
