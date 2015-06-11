@@ -46,3 +46,6 @@
 
 #   2. Which 5-minute interval, on average across all the days in the dataset, 
 #   contains the maximum number of steps?
+    
+    activity_mean$interval[which.max(activity_mean$mean)];
+    
