@@ -109,11 +109,23 @@
     
 #   1. Create a new factor variable in the dataset with two levels – “weekday” 
 #   and “weekend” indicating whether a given date is a weekday or weekend day.
+    activity_missing_values$day[weekdays(as.Date(activity_missing_values$date)) %in% c("Saturday", "Sunday")] <- "weekend";
+    activity_missing_values$day[!weekdays(as.Date(activity_missing_values$date)) %in% c("Saturday", "Sunday")] <- "weekday";
+    activity_missing_values[, 4] <- as.factor(activity_missing_values[, 4]);
     
 #   2. Make a panel plot containing a time series plot (i.e. type = "l") of the 
 #   5-minute interval (x-axis) and the average number of steps taken, averaged 
 #   across all weekday days or weekend days (y-axis). See the README file in the 
 #   GitHub repository to see an example of what this plot should look like using 
 #   simulated data.
+    activity_missing_day <- aggregate(steps ~ interval + day, data=activity_missing_values, FUN="mean");
+    
+    g <- ggplot(activity_missing_day, aes(x=interval, y=steps, group=1))
+    g <- g + geom_line(stat="identity", color="red")
+    g <- g + facet_wrap(~day, ncol=1)
+    g <- g + ggtitle("Avg Steps by 5-Minute Interval Accross All Days") 
+    g <- g + labs(x="Interval", y="Steps")
+    g <- g  + theme_bw()
+    g
     
     
