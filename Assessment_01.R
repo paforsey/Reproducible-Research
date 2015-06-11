@@ -26,9 +26,10 @@
     g
 
 #   3. Mean & Median of the Total Number of Steps taken per Day
+    total <- sum(activity_total$total);
     mean <- mean(activity_total$total);
     median <- median(activity_total$total);
-    mean;  median;
+    total;  mean;  median;
     
 
 #   What is the average daily activity pattern?
@@ -46,7 +47,6 @@
 
 #   2. Which 5-minute interval, on average across all the days in the dataset, 
 #   contains the maximum number of steps?
-    
     activity_mean$interval[which.max(activity_mean$mean)];
     
 
@@ -57,23 +57,50 @@
     
 #   1. Calculate and report the total number of missing values in the dataset 
 #   (i.e. the total number of rows with NAs).
-    
     length(which(is.na(activity_full)));
     
 #   2. Devise a strategy for filling in all of the missing values in the dataset. 
 #   The strategy does not need to be sophisticated. For example, you could use 
 #   the mean/median for that day, or the mean for that 5-minute interval, etc.
-    
+    # See part #3 below.
     
 #   3. Create a new dataset that is equal to the original dataset but with the 
 #   missing data filled in.
-    
+    missing_values <- data.frame(activity_full$steps);
+    missing_values[is.na(missing_values), ] <- ceiling(tapply(X=activity_full$steps, INDEX=activity_full$interval, FUN=mean, na.rm=TRUE));
+    activity_missing_values <- cbind(missing_values, activity_full[, 2:3]);
+    colnames(activity_missing_values) <- c("steps", "date", "interval");    
     
 #   4. Make a histogram of the total number of steps taken each day and Calculate 
-#   and report the mean and median total number of steps taken per day.  Do these 
-#   values differ from the estimates from the first part of the assignment? 
+#   and report the mean and median total number of steps taken per day.  
+    activity_missing_total <- ddply(activity_missing_values, "date", summarise, total=sum(steps));
+    head(activity_missing_total, n=10);
+    
+    g <- ggplot(activity_missing_total, aes(total))
+    g <- g + geom_histogram(aes(total), binwidth=2500, color="black", fill="blue", 
+        alpha=.5)
+    g <- g + ggtitle("Number of Steps Taken per Day") + labs(x="Steps", y="Frequency")
+    g <- g  + theme_bw()
+    g
+
+#   Do these values differ from the estimates from the first part of the assignment? 
+    total_missing <- sum(activity_missing_total$total);
+    mean_missing <- mean(activity_missing_total$total);
+    median_missing <- median(activity_missing_total$total);
+    total_missing;  mean_missing;  median_missing;
+
+    total_variance <- total_missing - total;
+    mean_variance <- mean_missing - mean;
+    median_variance <- median_missing- median;
+    total_variance;  mean_variance;  median_variance;
+    
+    
 #   What is the impact of imputing missing data on the estimates of the total 
 #   daily number of steps?
+    print(
+        paste("Imputing the missing data caused the total daily number of steps", 
+        "to increase by", total_variance)
+    );
     
     
 #   Are there differences in activity patterns between weekdays and weekends?
